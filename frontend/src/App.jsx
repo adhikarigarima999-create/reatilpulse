@@ -103,8 +103,8 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center space-x-3">
+      <header className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex flex-col md:flex-row items-center justify-between sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center space-x-3 w-full md:w-auto">
           <div className="bg-blue-600 p-2 rounded-lg text-white">
             <Activity size={24} />
           </div>
@@ -112,16 +112,16 @@ function App() {
             RetailPulse
           </h1>
         </div>
-        <div className="flex space-x-6">
-          <button onClick={() => setActiveTab("overview")} className={`font-medium pb-1 ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-900'}`}>Overview</button>
+        <div className="flex overflow-x-auto space-x-4 md:space-x-6 w-full md:w-auto mt-4 md:mt-0 pb-1 hide-scrollbar">
+          <button onClick={() => setActiveTab("overview")} className={`font-medium whitespace-nowrap pb-1 ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-900'}`}>Overview</button>
           <button onClick={() => setActiveTab("ab_test")} className={`font-medium pb-1 ${activeTab === 'ab_test' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-900'}`}>A/B Test</button>
-          <button onClick={() => setActiveTab("predict")} className={`font-medium pb-1 ${activeTab === 'predict' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-900'}`}>Predictor</button>
-          <button onClick={() => setActiveTab("upload")} className={`font-medium pb-1 ${activeTab === 'upload' ? 'text-emerald-600 border-b-2 border-emerald-600' : 'text-slate-500 hover:text-slate-900'}`}>Upload Data</button>
+          <button onClick={() => setActiveTab("predict")} className={`font-medium whitespace-nowrap pb-1 ${activeTab === 'predict' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-900'}`}>Predictor</button>
+          <button onClick={() => setActiveTab("upload")} className={`font-medium whitespace-nowrap pb-1 ${activeTab === 'upload' ? 'text-emerald-600 border-b-2 border-emerald-600' : 'text-slate-500 hover:text-slate-900'}`}>Upload Data</button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-8">
         {activeTab === "overview" && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {loadingEda && <p className="text-slate-500 animate-pulse flex items-center justify-center py-20 text-lg">Loading analytics...</p>}
