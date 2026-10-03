@@ -7,7 +7,7 @@ import {
   LineChart, Activity, ShoppingCart, Users, Play, Target, Upload, CheckCircle, AlertCircle
 } from 'lucide-react';
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "/api";
 
 function App() {
   const [activeTab, setActiveTab] = useState("overview");
