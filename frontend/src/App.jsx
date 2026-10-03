@@ -44,6 +44,11 @@ function App() {
     return sid;
   };
 
+  const resetSession = () => {
+    sessionStorage.removeItem("session_id");
+    window.location.reload();
+  };
+
   useEffect(() => {
     fetchEda();
   }, []);
@@ -351,6 +356,9 @@ function App() {
                   Download Sample CSVs
                 </a>
               </div>
+              <p className="text-slate-600 text-sm mb-6">
+                Uploading data creates a temporary private sandbox for your session. It will not affect the standard dataset for other visitors.
+              </p>
               {/* Drop Zone */}
               <div
                 className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all ${dragOver ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300 hover:border-slate-400 bg-slate-50'}`}
@@ -395,6 +403,14 @@ function App() {
                   </button>
                 </div>
               )}
+              
+              <div className="mt-8 pt-8 border-t border-slate-200">
+                <h3 className="text-md font-bold mb-2">Want to go back?</h3>
+                <p className="text-sm text-slate-500 mb-4">If you are done testing and want to revert to the standard 200,000-row demo dataset, click below to destroy your temporary sandbox.</p>
+                <button onClick={resetSession} className="bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                  Reset to Standard Dataset
+                </button>
+              </div>
             </div>
 
             {/* Upload Result */}
