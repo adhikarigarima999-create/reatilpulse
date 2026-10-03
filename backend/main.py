@@ -51,7 +51,7 @@ FILE_TABLE_MAP = {
 }
 
 
-def rebuild_views():
+def rebuild_views(schema: str = "public"):
     """Re-run Postgres SQL transforms to rebuild all views."""
     sql_files = [
         ROOT / "sql" / "pg_01_staging.sql",
@@ -59,6 +59,7 @@ def rebuild_views():
         ROOT / "sql" / "pg_03_marts.sql",
     ]
     with engine.connect() as conn:
+        conn.execute(text(f"SET search_path TO {schema}, public"))
         for f in sql_files:
             if f.exists():
                 sql_lines = [line for line in f.read_text().splitlines() if not line.strip().startswith("--")]
@@ -71,11 +72,13 @@ def rebuild_views():
 
 
 @app.post("/api/upload")
-async def upload_csvs(files: List[UploadFile] = File(...)):
+async def upload_csvs(session_id: str, files: List[UploadFile] = File(...)):
     """Upload custom CSV files, validate, write to Supabase, and rebuild views."""
     global _model_cache, _data_cache
-    _model_cache = None  # Invalidate cached model
-    _data_cache = None   # Invalidate cached data
+    if _model_cache and session_id in _model_cache:
+        del _model_cache[session_id]
+    if _data_cache and session_id in _data_cache:
+        del _data_cache[session_id]
 
     matched = {}
     errors = []
@@ -110,18 +113,21 @@ async def upload_csvs(files: List[UploadFile] = File(...)):
         missing_tables = [t for t in FILE_TABLE_MAP.values() if t not in matched]
         return {"success": False, "errors": [f"Missing files for tables: {missing_tables}"], "tables_loaded": list(matched.keys())}
 
-    # Drop existing tables with CASCADE to remove dependent views first
+    # Create session schema
+    safe_schema = f"session_{session_id}"
     with engine.connect() as conn:
+        conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {safe_schema}"))
+        conn.execute(text(f"SET search_path TO {safe_schema}"))
         for table_name in matched.keys():
             conn.execute(text(f"DROP TABLE IF EXISTS {table_name} CASCADE"))
         conn.commit()
 
-    # Write all tables to Supabase
+    # Write all tables to the session schema
     for table_name, df in matched.items():
-        df.to_sql(table_name, engine, if_exists='replace', index=False)
+        df.to_sql(table_name, engine, schema=safe_schema, if_exists='replace', index=False)
 
-    # Rebuild views
-    rebuild_views()
+    # Rebuild views inside the session schema
+    rebuild_views(safe_schema)
 
     return {
         "success": True,
@@ -131,27 +137,33 @@ async def upload_csvs(files: List[UploadFile] = File(...)):
     }
 
 
-_data_cache = None
+_data_cache = {}
 
-def load_data():
+def load_data(session_id: str = "public"):
     global _data_cache
-    if _data_cache:
-        return _data_cache
+    if session_id in _data_cache:
+        return _data_cache[session_id]
 
     try:
+        schema = f"session_{session_id}" if session_id != "public" else "public"
         with engine.connect() as conn:
+            # Check if schema exists, if not fallback to public
+            res = conn.execute(text("SELECT schema_name FROM information_schema.schemata WHERE schema_name = :s"), {"s": schema}).fetchone()
+            if not res:
+                schema = "public"
+            conn.execute(text(f"SET search_path TO {schema}, public"))
             fct_orders = pd.read_sql("SELECT * FROM fct_orders", conn)
             fct_customers = pd.read_sql("SELECT * FROM fct_customers", conn)
         
-        _data_cache = (fct_orders, fct_customers)
-        return _data_cache
+        _data_cache[session_id] = (fct_orders, fct_customers)
+        return _data_cache[session_id]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/eda")
-def get_eda():
-    fct_orders, fct_customers = load_data()
+def get_eda(session_id: str = "public"):
+    fct_orders, fct_customers = load_data(session_id)
 
     total_revenue = float(fct_orders['order_value'].sum())
     repeat_rate = float(fct_customers['is_repeat_customer'].mean() * 100)
@@ -188,8 +200,8 @@ class ABTestRequest(BaseModel):
 
 
 @app.post("/api/ab_test")
-def run_ab_test(req: ABTestRequest):
-    _, fct_customers = load_data()
+def run_ab_test(req: ABTestRequest, session_id: str = "public"):
+    _, fct_customers = load_data(session_id)
     lift_input = req.lift_pp / 100.0
 
     np.random.seed(7)
@@ -227,15 +239,20 @@ def run_ab_test(req: ABTestRequest):
     }
 
 
-_model_cache = None
+_model_cache = {}
 
 
-def get_model():
+def get_model(session_id: str = "public"):
     global _model_cache
-    if _model_cache:
-        return _model_cache
+    if session_id in _model_cache:
+        return _model_cache[session_id]
 
+    schema = f"session_{session_id}" if session_id != "public" else "public"
     with engine.connect() as conn:
+        res = conn.execute(text("SELECT schema_name FROM information_schema.schemata WHERE schema_name = :s"), {"s": schema}).fetchone()
+        if not res:
+            schema = "public"
+        conn.execute(text(f"SET search_path TO {schema}, public"))
         q = """
         SELECT
             fo.order_id,
@@ -250,6 +267,7 @@ def get_model():
         WHERE fo.order_seq_num = 1
         """
         df = pd.read_sql(q, conn)
+
 
     df["review_score"] = df["review_score"].fillna(df["review_score"].median())
     df["order_value"] = df["order_value"].fillna(df["order_value"].median())
@@ -272,8 +290,8 @@ def get_model():
     model = LogisticRegression(max_iter=1000, class_weight="balanced")
     model.fit(X_train_s, y_train)
 
-    _model_cache = (model, scaler, X.columns)
-    return _model_cache
+    _model_cache[session_id] = (model, scaler, X.columns)
+    return _model_cache[session_id]
 
 
 class PredictRequest(BaseModel):
@@ -285,8 +303,8 @@ class PredictRequest(BaseModel):
 
 
 @app.post("/api/predict")
-def predict_repeat(req: PredictRequest):
-    model, scaler, feature_cols = get_model()
+def predict_repeat(req: PredictRequest, session_id: str = "public"):
+    model, scaler, feature_cols = get_model(session_id)
 
     input_data = {
         "order_value": [req.order_value],

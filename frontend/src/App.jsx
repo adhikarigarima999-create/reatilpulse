@@ -34,6 +34,16 @@ function App() {
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
+  // Session Management (Multi-Tenancy)
+  const getSessionId = () => {
+    let sid = sessionStorage.getItem("session_id");
+    if (!sid) {
+      sid = Math.random().toString(36).substring(2, 10);
+      sessionStorage.setItem("session_id", sid);
+    }
+    return sid;
+  };
+
   useEffect(() => {
     fetchEda();
   }, []);
@@ -41,7 +51,7 @@ function App() {
   const fetchEda = async () => {
     setLoadingEda(true);
     try {
-      const res = await axios.get(`${API_BASE}/eda`);
+      const res = await axios.get(`${API_BASE}/eda?session_id=${getSessionId()}`);
       setEdaData(res.data);
     } catch (e) {
       console.error(e);
@@ -52,7 +62,7 @@ function App() {
   const runAbTest = async () => {
     setLoadingAb(true);
     try {
-      const res = await axios.post(`${API_BASE}/ab_test`, { lift_pp: parseFloat(liftInput) });
+      const res = await axios.post(`${API_BASE}/ab_test?session_id=${getSessionId()}`, { lift_pp: parseFloat(liftInput) });
       setAbResult(res.data);
     } catch (e) {
       console.error(e);
@@ -63,7 +73,7 @@ function App() {
   const runPredict = async () => {
     setLoadingPred(true);
     try {
-      const res = await axios.post(`${API_BASE}/predict`, {
+      const res = await axios.post(`${API_BASE}/predict?session_id=${getSessionId()}`, {
         order_value: parseFloat(predForm.order_value),
         installments: parseInt(predForm.installments),
         review_score: parseInt(predForm.review_score),
@@ -86,7 +96,7 @@ function App() {
       for (const file of uploadFiles) {
         formData.append('files', file);
       }
-      const res = await axios.post(`${API_BASE}/upload`, formData, {
+      const res = await axios.post(`${API_BASE}/upload?session_id=${getSessionId()}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setUploadResult(res.data);
