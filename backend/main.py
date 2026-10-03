@@ -71,8 +71,9 @@ def rebuild_views():
 @app.post("/api/upload")
 async def upload_csvs(files: List[UploadFile] = File(...)):
     """Upload custom CSV files, validate, write to Supabase, and rebuild views."""
-    global _model_cache
+    global _model_cache, _data_cache
     _model_cache = None  # Invalidate cached model
+    _data_cache = None   # Invalidate cached data
 
     matched = {}
     errors = []
@@ -122,12 +123,20 @@ async def upload_csvs(files: List[UploadFile] = File(...)):
     }
 
 
+_data_cache = None
+
 def load_data():
+    global _data_cache
+    if _data_cache:
+        return _data_cache
+
     try:
         with engine.connect() as conn:
             fct_orders = pd.read_sql("SELECT * FROM fct_orders", conn)
             fct_customers = pd.read_sql("SELECT * FROM fct_customers", conn)
-        return fct_orders, fct_customers
+        
+        _data_cache = (fct_orders, fct_customers)
+        return _data_cache
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -181,12 +190,9 @@ def run_ab_test(req: ABTestRequest):
 
     base_prob = float(df_ab["is_repeat_customer"].mean())
 
-    def outcome(row):
-        p = base_prob + (lift_input if row["group"] == "treatment" else 0.0)
-        p = min(max(p, 0), 1)
-        return np.random.binomial(1, p)
-
-    df_ab["repeat_purchase_outcome"] = df_ab.apply(outcome, axis=1)
+    p_array = np.where(df_ab["group"] == "treatment", base_prob + lift_input, base_prob)
+    p_array = np.clip(p_array, 0, 1)
+    df_ab["repeat_purchase_outcome"] = np.random.binomial(1, p_array)
 
     counts = df_ab.groupby("group")["repeat_purchase_outcome"].agg(["sum", "count"])
     successes = [counts.loc["treatment", "sum"], counts.loc["control", "sum"]]
