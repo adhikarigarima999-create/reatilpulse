@@ -110,6 +110,12 @@ async def upload_csvs(files: List[UploadFile] = File(...)):
         missing_tables = [t for t in FILE_TABLE_MAP.values() if t not in matched]
         return {"success": False, "errors": [f"Missing files for tables: {missing_tables}"], "tables_loaded": list(matched.keys())}
 
+    # Drop existing tables with CASCADE to remove dependent views first
+    with engine.connect() as conn:
+        for table_name in matched.keys():
+            conn.execute(text(f"DROP TABLE IF EXISTS {table_name} CASCADE"))
+        conn.commit()
+
     # Write all tables to Supabase
     for table_name, df in matched.items():
         df.to_sql(table_name, engine, if_exists='replace', index=False)
