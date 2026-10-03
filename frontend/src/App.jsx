@@ -150,7 +150,7 @@ function App() {
             {edaData && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+                  <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
                     <div>
                       <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Total Revenue</p>
                       <p className="text-3xl font-bold mt-1 text-slate-800">R$ {edaData.metrics.total_revenue.toLocaleString(undefined, {maximumFractionDigits:0})}</p>
@@ -159,7 +159,7 @@ function App() {
                       <ShoppingCart size={24} />
                     </div>
                   </div>
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+                  <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
                     <div>
                       <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Repeat Rate</p>
                       <p className="text-3xl font-bold mt-1 text-slate-800">{edaData.metrics.repeat_rate.toFixed(1)}%</p>
@@ -168,7 +168,7 @@ function App() {
                       <Users size={24} />
                     </div>
                   </div>
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+                  <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
                     <div>
                       <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Late Delivery Rate</p>
                       <p className="text-3xl font-bold mt-1 text-slate-800">{edaData.metrics.late_rate.toFixed(1)}%</p>
@@ -180,7 +180,7 @@ function App() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                  <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h3 className="text-lg font-bold mb-4">Repeat Rate by State</h3>
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -195,7 +195,7 @@ function App() {
                     </div>
                   </div>
                   
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                  <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h3 className="text-lg font-bold mb-4">Avg Review Score (Late vs On-time)</h3>
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
@@ -217,7 +217,7 @@ function App() {
 
         {activeTab === "ab_test" && (
           <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <div className="bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
               <div className="flex items-center space-x-3 mb-6">
                 <Target className="text-indigo-600" size={28} />
                 <h2 className="text-2xl font-bold">A/B Testing Simulator</h2>
@@ -242,7 +242,7 @@ function App() {
             </div>
 
             {abResult && (
-              <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+              <div className="bg-white p-4 md:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-6 border-b border-slate-100">
                   <div>
                     <p className="text-sm text-slate-500">Treatment Rate</p>
