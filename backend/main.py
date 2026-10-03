@@ -61,9 +61,11 @@ def rebuild_views():
     with engine.connect() as conn:
         for f in sql_files:
             if f.exists():
-                for stmt in f.read_text().split(";"):
+                sql_lines = [line for line in f.read_text().splitlines() if not line.strip().startswith("--")]
+                clean_sql = "\n".join(sql_lines)
+                for stmt in clean_sql.split(";"):
                     stmt = stmt.strip()
-                    if stmt and not stmt.startswith("--"):
+                    if stmt:
                         conn.execute(text(stmt))
                 conn.commit()
 
