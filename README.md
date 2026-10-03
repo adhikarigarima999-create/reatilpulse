@@ -8,6 +8,8 @@
 
 RetailPulse is a full-stack, cloud-hosted analytics platform designed to ingest raw e-commerce CSV data, process it through a robust SQL pipeline, and serve actionable insights, A/B testing simulations, and machine learning predictions through a dynamic React frontend.
 
+**🔴 Live Demo:** [https://retailpulse-fastapi.onrender.com](https://retailpulse-fastapi.onrender.com)
+
 ---
 
 ## 🚀 Features & Architecture
