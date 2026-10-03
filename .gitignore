@@ -25,3 +25,15 @@ desktop.ini
 # IDE / Editor configs
 .vscode/
 .idea/
+
+# Frontend
+node_modules/
+
+# Scratch & Scripts
+scratch/
+check_db.py
+mem_test.py
+test_*.py
+
+# Environment
+.env
