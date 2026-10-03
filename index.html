@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailPulse | Modern Analytics</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Marked.js removed: content is rendered as static HTML -->
+
+    <style>
+        /* Custom sleek markdown styling */
+        .prose h1 { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; }
+        .prose h2 { font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .prose p { color: #475569; margin-bottom: 1rem; line-height: 1.6; }
+        .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #475569; }
+        .prose li { margin-bottom: 0.5rem; }
+        .prose pre { background-color: #0f172a; color: #f8fafc; padding: 1.25rem; border-radius: 0.75rem; overflow-x: auto; font-family: ui-monospace, monospace; font-size: 0.875rem; margin-bottom: 1.5rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .prose code { color: #ef4444; background: #fee2e2; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.875em; }
+        .prose pre code { color: inherit; background: none; padding: 0; }
+        
+        /* Smooth transitions */
+        .hover-card { transition: all 0.2s ease-in-out; }
+        .hover-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-slate-800">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20 hidden md:flex">
+        <div class="h-16 flex items-center px-6 border-b border-slate-800 mb-6">
+            <i class="ph-fill ph-chart-polar text-brand-500 text-2xl mr-3"></i>
+            <span class="text-white font-bold text-lg tracking-wide">RetailPulse</span>
+        </div>
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="#" class="flex items-center px-4 py-2.5 bg-brand-600 text-white rounded-lg group">
+                <i class="ph ph-squares-four text-xl mr-3"></i>
+                <span class="font-medium">Overview</span>
+            </a>
+            <a href="#charts" class="flex items-center px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group">
+                <i class="ph ph-chart-line-up text-xl mr-3 text-slate-400 group-hover:text-brand-400 transition-colors"></i>
+                <span class="font-medium">EDA Charts</span>
+            </a>
+            <a href="#ab-test" class="flex items-center px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group">
+                <i class="ph ph-flask text-xl mr-3 text-slate-400 group-hover:text-brand-400 transition-colors"></i>
+                <span class="font-medium">A/B Testing</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-800">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">
+                    DA
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-white">Data Analyst</p>
+                    <p class="text-xs text-slate-500">Portfolio Build</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto overflow-x-hidden relative">
+        
+        <!-- Top header -->
+        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
+            <div>
+                <h2 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-500">
+                    E-Commerce Experimentation
+                </h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                    <i class="ph-fill ph-check-circle mr-1.5"></i> Pipeline Passed
+                </span>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+            
+            <!-- Welcome / KPI row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- KPI 1 -->
+                <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm hover-card flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">Total Audience</p>
+                        <h3 class="text-3xl font-bold text-slate-800">96,096</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-brand-600 text-2xl">
+                        <i class="ph-fill ph-users"></i>
+                    </div>
+                </div>
+                <!-- KPI 2 -->
+                <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm hover-card flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">Orders Analyzed</p>
+                        <h3 class="text-3xl font-bold text-slate-800">8,739</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 text-2xl">
+                        <i class="ph-fill ph-shopping-cart"></i>
+                    </div>
+                </div>
+                <!-- KPI 3 -->
+                <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm hover-card flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 mb-1">Predicted Lift</p>
+                        <h3 class="text-3xl font-bold text-slate-800">+4.26<span class="text-lg text-slate-500">pp</span></h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 text-2xl">
+                        <i class="ph-fill ph-trend-up"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div id="charts" class="scroll-mt-20">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center">
+                        <i class="ph-fill ph-presentation-chart text-brand-500 mr-2"></i> Exploratory Data Analysis
+                    </h2>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    
+                    <div class="bg-white p-1 rounded-2xl shadow-sm border border-slate-200 hover-card group relative">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl z-0 pointer-events-none"></div>
+                        <div class="p-5 pb-0 relative z-10">
+                            <h3 class="font-semibold text-slate-800">Delivery vs Review Score</h3>
+                            <p class="text-xs text-slate-500 mt-1 mb-4">Late deliveries penalize satisfaction heavily.</p>
+                        </div>
+                        <div class="px-4 pb-4 relative z-10 overflow-hidden rounded-xl">
+                            <img src="charts/delivery_lateness_vs_review.png" alt="Delivery Lateness" class="w-full h-auto object-contain rounded-lg border border-slate-100">
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-1 rounded-2xl shadow-sm border border-slate-200 hover-card group relative">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl z-0 pointer-events-none"></div>
+                        <div class="p-5 pb-0 relative z-10">
+                            <h3 class="font-semibold text-slate-800">Retention by Geography</h3>
+                            <p class="text-xs text-slate-500 mt-1 mb-4">Repeat purchase rate across states.</p>
+                        </div>
+                        <div class="px-4 pb-4 relative z-10 overflow-hidden rounded-xl">
+                            <img src="charts/repeat_purchase_rate_by_state.png" alt="Repeat Rate" class="w-full h-auto object-contain rounded-lg border border-slate-100">
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-1 rounded-2xl shadow-sm border border-slate-200 hover-card group relative lg:col-span-2 xl:col-span-1">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl z-0 pointer-events-none"></div>
+                        <div class="p-5 pb-0 relative z-10">
+                            <h3 class="font-semibold text-slate-800">Order Value Distribution</h3>
+                            <p class="text-xs text-slate-500 mt-1 mb-4">Long-tail distribution of transaction sizes.</p>
+                        </div>
+                        <div class="px-4 pb-4 relative z-10 overflow-hidden rounded-xl">
+                            <img src="charts/order_value_distribution.png" alt="Order Value" class="w-full h-auto object-contain rounded-lg border border-slate-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- A/B Test Section -->
+            <div id="ab-test" class="scroll-mt-20 pb-12">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center">
+                        <i class="ph-fill ph-file-text text-brand-500 mr-2"></i> Experiment Results & ML Model
+                    </h2>
+                    <span class="text-xs font-medium bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200">
+                        Read from logs/ab_test_result.md
+                    </span>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex">
+                    <div class="w-2 bg-brand-500"></div>
+                    <div class="p-8 w-full">
+                        <div id="ab-test-content" class="prose max-w-none">
+                            <h1>A/B Test Log — Discount Promo on Repeat Purchase</h1>
+
+                            <h2>Hypothesis</h2>
+                            <p>
+                                <strong>H₀:</strong> A 10% discount promo has no effect on repeat-purchase rate.<br>
+                                <strong>H₁:</strong> A 10% discount promo increases repeat-purchase rate.
+                            </p>
+
+                            <h2>Sample Balance</h2>
+                            <ul>
+                                <li><code>t = −0.195</code>, <code>p = 0.845</code> on avg_order_value pre-treatment — groups are balanced.</li>
+                            </ul>
+
+                            <h2>Result</h2>
+                            <ul>
+                                <li>Treatment repeat rate: <strong>0.6905</strong></li>
+                                <li>Control repeat rate: <strong>0.6480</strong></li>
+                                <li>Absolute lift: <strong>+4.26 percentage points</strong></li>
+                                <li><code>z = 2.482</code>, one-sided <code>p = 0.0065</code></li>
+                            </ul>
+
+                            <h2>Business Recommendation</h2>
+                            <p>
+                                <strong style="color:#16a34a;">✅ SHIP</strong> — the 4.26 pp lift is statistically significant
+                                (<em>p</em> = 0.0065). Modeled incremental revenue (<strong>R$ 201,746</strong>) exceeds
+                                the modeled discount cost (<strong>R$ 164,349</strong>), yielding positive ROI.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
