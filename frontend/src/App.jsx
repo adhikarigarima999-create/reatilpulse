@@ -335,8 +335,12 @@ function App() {
                 <h2 className="text-2xl font-bold">Upload Custom Data</h2>
               </div>
               <p className="text-slate-600 mb-2">Upload your own CSV files to replace the demo data and run the full analytics pipeline on your dataset.</p>
-              <p className="text-sm text-slate-500 mb-6">Required files (5 CSVs): <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">orders</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">customers</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">order_items</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">payments</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">reviews</code></p>
-
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+                <p className="text-sm text-slate-500">Required files (5 CSVs): <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">orders</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">customers</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">order_items</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">payments</code>, <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">reviews</code></p>
+                <a href="/sample_data.zip" download className="mt-3 sm:mt-0 inline-flex items-center text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded hover:bg-emerald-100 transition-colors">
+                  Download Sample CSVs
+                </a>
+              </div>
               {/* Drop Zone */}
               <div
                 className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all ${dragOver ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300 hover:border-slate-400 bg-slate-50'}`}
