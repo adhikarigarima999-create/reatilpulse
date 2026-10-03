@@ -297,10 +297,17 @@ def predict_repeat(req: PredictRequest):
 
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+import os
 
+# Mount the 'charts' folder for any dynamically generated images
 app.mount('/charts', StaticFiles(directory=str(ROOT / 'charts')), name='charts')
 
-@app.get('/')
-def serve_index():
-    return FileResponse(ROOT / 'index.html')
+# Mount the built React frontend
+dist_path = ROOT / 'frontend' / 'dist'
+if dist_path.exists():
+    app.mount('/', StaticFiles(directory=str(dist_path), html=True), name='frontend')
+else:
+    @app.get('/')
+    def fallback_index():
+        return {"message": "Frontend not built yet. Please run 'npm run build' inside the 'frontend' directory."}
 
