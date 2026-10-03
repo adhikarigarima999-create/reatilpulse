@@ -124,7 +124,19 @@ function App() {
       <main className="max-w-7xl mx-auto px-8 py-8">
         {activeTab === "overview" && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {loadingEda && <p className="text-slate-500 animate-pulse">Loading data from backend...</p>}
+            {loadingEda && <p className="text-slate-500 animate-pulse flex items-center justify-center py-20 text-lg">Loading analytics...</p>}
+            {!loadingEda && !edaData && (
+              <div className="flex flex-col items-center justify-center p-12 bg-white rounded-2xl shadow-sm border border-slate-200 mt-10">
+                <AlertCircle className="w-16 h-16 text-slate-300 mb-6" />
+                <h3 className="text-2xl font-semibold text-slate-800">No Analytics Data Found</h3>
+                <p className="text-slate-500 mt-3 text-center max-w-lg leading-relaxed">
+                  The dashboard is currently empty. Please go to the <strong className="text-slate-700">Upload Data</strong> tab and upload your CSV files to populate the database and unlock insights!
+                </p>
+                <button onClick={() => setActiveTab("upload")} className="mt-8 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium transition-colors shadow-sm">
+                  Go to Upload Data
+                </button>
+              </div>
+            )}
             {edaData && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
